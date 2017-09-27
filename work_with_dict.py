@@ -3,43 +3,52 @@ import smtplib
 
 class Event:
 
-	def __init__(self):
-		self.contacts_dict = {}
+	def __init__(self, contacts_dict={}):
+		self.contacts_dict = contacts_dict
 
-	def register_person(self):
-		self.name = input("Enter name: ")
-		self.email = input("Enter email: ")
-		self.contacts_dict[self.name] = self.email
+	def register_person(self,name,email):
+		self.contacts_dict[name] = email
 		return self.contacts_dict
 
-	def search_contact(self):
-		name = input("Enter name to search: ")
-		for key in self.contacts_dict:
-			if key == name:
-				print(self.contacts_dict[key])
+	def search_contact(self, name):
+		return self.contacts_dict.get(name, "Sorry, name not found")
 
-	def send_email(self):
-		print("Your email is: {}".format(self.email))
-		self.pswrd = input("Enter your pasword: ")
-		self.reciver_email = input("Thankyou, now enter email for reciver: ")
-		self.message = input("Enter message: ") 
-		return self.message
+	def get_email_addresses(self):
+		contact_list = []
+		for value in self.contacts_dict.values():
+			contact_list.append(value)
+		return contact_list		
 
 
 
+gmail_mail = "elkana@meltwater.org"
+gmail_password = "elykips+254"
+
+#----------- CREATE INSTANCE OF CLASS EVENT -----------# 
 mest_party = Event()
-mest_party.register_person()
-mest_party.search_contact()
-mest_party.send_email()
 
+#----------- CREATE PERSON WITH GIVEN PARAMETERS -----------#
+mest_party.register_person('ouma','rodgers.ouma@meltwater.org')
+
+#----------- SEARCH AND DISPLAY EMAIL FOR GIVEN NAME -----------#
+search_results = mest_party.search_contact("ouma")
+print(search_results)
+
+#----------- GET LIST OF EMAIL ADDRESSES FROM DICT -----------#
+receiver_emails = mest_party.get_email_addresses()
+print(receiver_emails)
+
+#----------- CAPTURE CONTENT -----------#
+content = input("Type your email here: ")
+
+
+#----------- SMTP CONFIGS -----------# 
 mail = smtplib.SMTP('smtp.gmail.com',587)
 mail.ehlo()
 mail.starttls()
-mail.login(mest_party.email,mest_party.pswrd)
-mail.sendmail(mest_party.email,mest_party.reciver_email,mest_party.message)
+mail.login(gmail_mail,gmail_password)
+mail.sendmail(gmail_mail,receiver_emails,content)
 mail.close()
 print("Succesfully sent :)")
-
-
 
 
